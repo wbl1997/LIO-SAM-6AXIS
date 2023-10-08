@@ -32,6 +32,7 @@ POINT_CLOUD_REGISTER_POINT_STRUCT(OusterPointXYZIRT,
 
 // Use the Velodyne point format as a common representation
 using PointXYZIRT = VelodynePointXYZIRT;
+const bool time_list(PointXYZIRT &x, PointXYZIRT &y) {return (x.time < y.time);};
 
 const int queueLength = 2000;
 
@@ -231,6 +232,9 @@ public:
             ROS_ERROR_STREAM("Unknown sensor type: " << int(sensor));
             ros::shutdown();
         }
+
+        /*** sort point clouds by offset time ***/
+        sort(laserCloudIn->points.begin(), laserCloudIn->points.end(), time_list);
 
         // get timestamp
         cloudHeader = currentCloudMsg.header;

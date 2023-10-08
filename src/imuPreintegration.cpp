@@ -356,10 +356,11 @@ public:
             if (imuTime < currentCorrectionTime - delta_t)
             {
                 double dt = (lastImuT_opt < 0) ? (1.0 / 500.0) : (imuTime - lastImuT_opt);
-                imuIntegratorOpt_->integrateMeasurement(
-                        gtsam::Vector3(thisImu->linear_acceleration.x, thisImu->linear_acceleration.y, thisImu->linear_acceleration.z),
-                        gtsam::Vector3(thisImu->angular_velocity.x,    thisImu->angular_velocity.y,    thisImu->angular_velocity.z), dt);
-                
+                if (dt > 0){
+                    imuIntegratorOpt_->integrateMeasurement(
+                            gtsam::Vector3(thisImu->linear_acceleration.x, thisImu->linear_acceleration.y, thisImu->linear_acceleration.z),
+                            gtsam::Vector3(thisImu->angular_velocity.x,    thisImu->angular_velocity.y,    thisImu->angular_velocity.z), dt);
+                }
                 lastImuT_opt = imuTime;
                 imuQueOpt.pop_front();
             }
@@ -424,9 +425,11 @@ public:
                 sensor_msgs::Imu *thisImu = &imuQueImu[i];
                 double imuTime = ROS_TIME(thisImu);
                 double dt = (lastImuQT < 0) ? (1.0 / 500.0) :(imuTime - lastImuQT);
-
-                imuIntegratorImu_->integrateMeasurement(gtsam::Vector3(thisImu->linear_acceleration.x, thisImu->linear_acceleration.y, thisImu->linear_acceleration.z),
-                                                        gtsam::Vector3(thisImu->angular_velocity.x,    thisImu->angular_velocity.y,    thisImu->angular_velocity.z), dt);
+                if(dt>0){
+                    imuIntegratorImu_->integrateMeasurement(
+                        gtsam::Vector3(thisImu->linear_acceleration.x, thisImu->linear_acceleration.y, thisImu->linear_acceleration.z),
+                        gtsam::Vector3(thisImu->angular_velocity.x, thisImu->angular_velocity.y, thisImu->angular_velocity.z), dt);
+                }
                 lastImuQT = imuTime;
             }
         }
@@ -461,14 +464,20 @@ public:
 
         sensor_msgs::Imu thisImu = imuConverter(*imu_raw);
 
+        double imuTime = ROS_TIME(&thisImu);
+
+        if (doneFirstOpt == false){
+            imuQueOpt.push_back(thisImu);
+            imuQueImu.push_back(thisImu);
+            return;
+        }
+        
+        double dt = (lastImuT_imu < 0) ? (1.0 / 500.0) : (imuTime - lastImuT_imu);
+        if(dt<=0) return;
+
         imuQueOpt.push_back(thisImu);
         imuQueImu.push_back(thisImu);
-
-        if (doneFirstOpt == false)
-            return;
-
-        double imuTime = ROS_TIME(&thisImu);
-        double dt = (lastImuT_imu < 0) ? (1.0 / 500.0) : (imuTime - lastImuT_imu);
+        
         lastImuT_imu = imuTime;
 
         // integrate this single imu message
