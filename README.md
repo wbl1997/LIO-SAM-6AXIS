@@ -11,6 +11,10 @@
 
   - Modify the call about imu orientation in the imuConverter function in utilith.h.
 
+3. for HESAI XT32.
+
+  - add HESAI data convert in ImageProjection::cachePointCloud().
+
 
 ## Acknowledgement
 
