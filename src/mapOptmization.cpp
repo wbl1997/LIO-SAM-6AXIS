@@ -1627,6 +1627,9 @@ public:
         pose_stamped.pose.orientation.z = q.z();
         pose_stamped.pose.orientation.w = q.w();
 
+        // // update extQRPY
+        // extQRPY = Eigen::Quaterniond(q.w(), q.x(), q.y(), q.z())*Eigen::Quaterniond(extRot);
+
         globalPath.poses.push_back(pose_stamped);
     }
 
@@ -1664,6 +1667,9 @@ public:
             increOdomAffine = increOdomAffine * affineIncre;
             float x, y, z, roll, pitch, yaw;
             pcl::getTranslationAndEulerAngles (increOdomAffine, x, y, z, roll, pitch, yaw);
+            // tf::Quaternion tmpQuat;
+            // tmpQuat.setRPY(roll, pitch, yaw);
+            // extQRPY = Eigen::Quaterniond(tmpQuat.w(), tmpQuat.x(), tmpQuat.y(), tmpQuat.z());
             if (cloudInfo.imuAvailable == true)
             {
                 if (std::abs(cloudInfo.imuPitchInit) < 1.4)

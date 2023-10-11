@@ -2,7 +2,8 @@ lio_sam:
 
   # Topics
   pointCloudTopic: "/hesai/pandar"               # Point cloud data
-  imuTopic: "/alphasense/imu"               # IMU data
+  imuTopic: "/zed/zed_node/imu/data"               # IMU data
+  # imuTopic: "/imu_raw"               # IMU data
   odomTopic: "odometry/imu"                   # IMU pre-preintegration odometry, same frequency as IMU
   gpsTopic: "gps_odom"                   # GPS odometry topic from navsat, see module_navsat.launch file
 
@@ -31,21 +32,21 @@ lio_sam:
   lidarMaxRange: 60.0                       # default: 1000.0, maximum lidar range to be used
 
   # IMU Settings
-  imuAccNoise: 0.0001688956233495657
-  imuGyrNoise: 0.0010679343003532472
-  imuAccBiasN: 9.782812831313576e-07
-  imuGyrBiasN: 2.6541629581345176e-05
-  imuGravity: 9.80511
+  imuAccNoise: 0.4
+  imuGyrNoise: 0.1
+  imuAccBiasN: 0.01
+  imuGyrBiasN: 0.01
+  imuGravity: 9.79
   imuRPYWeight: 0.01
 
   # Extrinsics: T_lb (lidar -> imu)
-  extrinsicTrans: [ -0.00695046499029016, -0.006713481609220226, 0.04989346097032105 ]
-  extrinsicRot: [ 0.006609639848469359, -0.999976224957192, 0.001965243352927243,
-               -0.9999773650294641, -0.006612093869054185, -0.001244846735961018,
-                0.001257811513201671, -0.001956970881110609, -0.9999972940839227]
+  extrinsicTrans: [ 0.11, -0.0, -0.22 ]
+  extrinsicRot: [  0, 1, 0,
+                   -1, 0, 0,
+                   0, 0, 1]
   extrinsicRPY: [ 1, 0, 0,
                   0, 1, 0,
-                  0, 0, -1 ]
+                  0, 0, 1 ]
 
 
   # LOAM feature threshold
